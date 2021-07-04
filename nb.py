@@ -1,3 +1,6 @@
+from math import log as ln
+
+
 def vocabulary(data):
     """
     Creates the vocabulary from the data.
@@ -34,7 +37,7 @@ def estimate_theta(train_data, train_labels, vocab):
                        len(train_data) is the number of examples in the training data.
     :param train_labels: List of class names. len(train_labels) is the number of examples in the training data.
     :param vocab: Set of words in the training set.
-:return: theta. theta is a dictionary of dictionaries. At the first level, the keys are the class names. At the
+    :return: theta. theta is a dictionary of dictionaries. At the first level, the keys are the class names. At the
              second level, the keys are all the words in vocab and the values are their estimated probabilities given
              the first level class name.
     """
@@ -74,4 +77,18 @@ def test(theta, pi, vocab, test_data):
     :return: scores, list of lists. len(scores) is the number of examples in the test set. Every inner list contains
              tuples where the first element is the score and the second element is the class name.
     """
-    
+    scores = []
+    for words in test_data:
+        sub = []
+        for label in pi:
+            result = ln(pi[label])
+            for word in words:
+                result += ln(theta[label][word])
+            sub.append((result,label))
+        scores.append(sub)
+
+    return scores
+
+
+
+

@@ -41,12 +41,12 @@ for class_name in pi_gt:
         pi_success = False
 print('Pi result: {}'.format(pi_success))
 
-# scores = test(theta, pi, vocab, test_data)
-# scores_success = True
-# for score_gt, score_pred in zip(scores_gt, scores):
-#     gt_dict = dict([(x[1], x[0]) for x in score_gt])
-#     pred_dict = dict([(x[1], x[0]) for x in score_pred])
-#     for class_name in gt_dict:
-#         if abs(gt_dict[class_name] - pred_dict[class_name]) > 10 ** -5:
-#             scores_success = False
-# print('Scores result: {}'.format(scores_success))
+scores = test(theta, pi, vocab, test_data)
+scores_success = True
+for score_gt, score_pred in zip(scores_gt, scores):
+    gt_dict = dict([(x[1], x[0]) for x in score_gt])
+    pred_dict = dict([(x[1], x[0]) for x in score_pred])
+    for class_name in gt_dict:
+        if abs(gt_dict[class_name] - pred_dict[class_name]) > 10 ** -5:
+            scores_success = False
+print('Scores result: {}'.format(scores_success))

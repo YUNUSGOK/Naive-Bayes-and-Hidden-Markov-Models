@@ -148,4 +148,4 @@ if __name__ == "__main__":
     estimated_labels = find_labels(scores)
 
     accuracy = compare_labels(estimated_labels, train_labels)
-    print(accuracy)
+    print("Accuracy:" ,accuracy)

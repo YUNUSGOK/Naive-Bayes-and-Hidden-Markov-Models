@@ -1,5 +1,7 @@
 from math import log as ln
-
+import os
+import re
+import numpy as np
 
 def vocabulary(data):
     """
@@ -83,12 +85,67 @@ def test(theta, pi, vocab, test_data):
         for label in pi:
             result = ln(pi[label])
             for word in words:
-                result += ln(theta[label][word])
+                if word in theta[label]:
+                    result += ln(theta[label][word])
             sub.append((result,label))
         scores.append(sub)
-
     return scores
 
 
+def read_data(folder, filename):
+    train_data_path = os.path.join(folder,filename)
+    train_data = []
+    with open(train_data_path, "r",encoding="utf-8") as train_data_file:
+        lines = train_data_file.readlines()
+        for line in lines:
+            raw = line.lower() 
+
+            wordList = re.sub("[^\w]", " ",  raw).split()
+            train_data.append(wordList[1:])
+
+    return train_data
 
 
+def read_labels(folder, filename):
+    train_labels_path = os.path.join(folder,filename)
+    train_labels = []
+    with open(train_labels_path, "r",encoding="utf-8") as train_labels_file:
+        labels = train_labels_file.read().splitlines() 
+    return labels
+
+
+def compare_labels(estimated_labels, train_labels):
+    count = 0
+    n = len(estimated_labels)
+    for i in range(n):
+        if estimated_labels[i] == test_labels[i]:
+            count += 1
+    return count/n
+    
+def find_labels(scores):
+    estimated_labels = []
+    for i in range(len(scores)):
+        maximum = scores[i][0]
+
+        for label in scores[i]:
+
+            if label[0]> maximum[0]:
+                maximum = label
+        estimated_labels.append(maximum[1])
+    return estimated_labels
+
+if __name__ == "__main__":
+    folder = os.path.join('hw4_data', 'sentiment')
+    train_data = read_data(folder, "train_data.txt")
+    train_labels = read_labels(folder, "train_labels.txt")  
+    test_data = read_data(folder, "test_data.txt")
+    test_labels = read_labels(folder, "test_labels.txt")  
+    
+    vocab = vocabulary(train_data)
+    pi = estimate_pi(train_labels)
+    theta = estimate_theta(train_data, train_labels, vocab)
+    scores = test(theta, pi, vocab, test_data)
+    estimated_labels = find_labels(scores)
+
+    accuracy = compare_labels(estimated_labels, train_labels)
+    print(accuracy)
